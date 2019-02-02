@@ -220,7 +220,7 @@ chmod -v u+w /tools/lib/libtcl8.6.so
 make install-private-headers
 ln -sv tclsh8.6 /tools/bin/tclsh
 
- #Expect
+#Expect
 echo "Expect!"
 cd $SRCS
 tar -xf expect5.45.4.tar.gz
