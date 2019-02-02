@@ -88,9 +88,9 @@ cd       build
     --disable-libssp                               \
     --disable-libvtv                               \
     --disable-libstdcxx                            \
-    --enable-languages=c,c++ > ${log_dir}/gcc-config.log
-make > ${log_dir}/gcc-build.log
-make install >> ${log_dir}/gcc-build.log
+    --enable-languages=c,c++ > ${log_dir}/gcc-config.log2>&1
+make > ${log_dir}/gcc-build.log 2>&1
+make install >> ${log_dir}/gcc-build.log 2>&1
 
 
 # linux
@@ -98,8 +98,8 @@ echo "Linux!"
 cd $SRCS
 tar -xf linux-4.18.5.tar.xz
 cd linux-4.18.5
-make mrproper > ${log_dir}/linux-build.log
-make INSTALL_HDR_PATH=dest headers_install >> ${log_dir}/linux-build.log
+make mrproper > ${log_dir}/linux-build.log 2>&1
+make INSTALL_HDR_PATH=dest headers_install >> ${log_dir}/linux-build.log 2>&1
 if [ ! -d /tools/include ]; then
   mkdir /tools/include
 fi
@@ -121,9 +121,9 @@ cd build
       --with-headers=/tools/include      \
       libc_cv_forced_unwind=yes          \
       libc_cv_c_cleanup=yes       \
-  > ${log_dir}/glibc-configure.log
-make -j1 > ${log_dir}/glibc-build.log # force single thread
-make -j1 install >> ${log_dir}/glibc-build.log
+  > ${log_dir}/glibc-configure.log 2>&1
+make -j1 > ${log_dir}/glibc-build.log 2>&1 # force single thread
+make -j1 install >> ${log_dir}/glibc-build.log 2>&1
 
 
 #libstdc++
@@ -138,9 +138,9 @@ cd build-libstdc++/
     --disable-nls                   \
     --disable-libstdcxx-threads     \
     --disable-libstdcxx-pch         \
-    --with-gxx-include-dir=/tools/$LFS_TGT/include/c++/8.2.0 > ${log_dir}/libstdc++-configure.log
-make > ${log_dir}/libstdc++-build.log
-make install >> ${log_dir}/libstdc++-build.log
+    --with-gxx-include-dir=/tools/$LFS_TGT/include/c++/8.2.0 > ${log_dir}/libstdc++-configure.log 2>&1
+make > ${log_dir}/libstdc++-build.log 2>&1
+make install >> ${log_dir}/libstdc++-build.log 2>&1
 
 
 #binutils pass2
@@ -156,11 +156,11 @@ RANLIB=$LFS_TGT-ranlib         \
     --disable-nls              \
     --disable-werror           \
     --with-lib-path=/tools/lib \
-    --with-sysroot > ${log_dir}/binutils2-config.log
-make > ${log_dir}/binutils2-build.log
-make install >> ${log_dir}/binutils2-build.log
-make -C ld clean >> ${log_dir}/binutils2-build.log
-make -C ld LIB_PATH=/usr/lib:/lib >> ${log_dir}/binutils2-build.log
+    --with-sysroot > ${log_dir}/binutils2-config.log 2>&1
+make > ${log_dir}/binutils2-build.log 2>&1
+make install >> ${log_dir}/binutils2-build.log 2>&1
+make -C ld clean >> ${log_dir}/binutils2-build.log 2>&1
+make -C ld LIB_PATH=/usr/lib:/lib >> ${log_dir}/binutils2-build.log 2>&1
 cp -v ld/ld-new /tools/bin
 
 
@@ -202,9 +202,9 @@ RANLIB=$LFS_TGT-ranlib                             \
     --disable-libstdcxx-pch                        \
     --disable-multilib                             \
     --disable-bootstrap                            \
-    --disable-libgomp > ${log_dir}/gcc2-config.log
-make > ${log_dir}/gcc2-build.log
-make install >> ${log_dir}/gcc2-build.log
+    --disable-libgomp > ${log_dir}/gcc2-config.log 2>&1
+make > ${log_dir}/gcc2-build.log 2>&1
+make install >> ${log_dir}/gcc2-build.log 2>&1
 ln -sv gcc /tools/bin/cc
 
 
@@ -229,9 +229,9 @@ cp -v configure{,.orig}
 sed 's:/usr/local/bin:/bin:' configure.orig > configure
 ./configure --prefix=/tools       \
             --with-tcl=/tools/lib \
-            --with-tclinclude=/tools/include > ${log_dir}/expect-config.log
-make > ${log_dir}/expect-build.log
-make SCRIPTS="" install >> ${log_dir}/expect-build.log
+            --with-tclinclude=/tools/include > ${log_dir}/expect-config.log 2>&1
+make > ${log_dir}/expect-build.log 2>&1
+make SCRIPTS="" install >> ${log_dir}/expect-build.log 2>&1
 
 
 #DejaGNU
@@ -239,8 +239,8 @@ echo "DejaGNU!"
 cd $SRCS
 tar -xf dejagnu-1.6.1.tar.gz
 cd dejagnu-1.6.1/
-./configure --prefix=/tools > ${log_dir}/dejagnu-config.log
-make install > ${log_dir}/dejagnu-build.log
+./configure --prefix=/tools > ${log_dir}/dejagnu-config.log 2>&1
+make install > ${log_dir}/dejagnu-build.log 2>&1
 
 
 #M4
@@ -250,10 +250,10 @@ tar -xf m4-1.4.18.tar.xz
 cd m4-1.4.18
 sed -i 's/IO_ftrylockfile/IO_EOF_SEEN/' lib/*.c
 echo "#define _IO_IN_BACKUP 0x100" >> lib/stdio-impl.h
-./configure --prefix=/tools > ${log_dir}/m4-config.log
-make > ${log_dir}/m4-build.log
-make check >> ${log_dir}/m4-build.log
-make install >> ${log_dir}/m4-build.log
+./configure --prefix=/tools > ${log_dir}/m4-config.log 2>&1
+make > ${log_dir}/m4-build.log 2>&1
+make check >> ${log_dir}/m4-build.log 2>&1
+make install >> ${log_dir}/m4-build.log 2>&1
 
 
 #NCurses
@@ -267,18 +267,18 @@ sed -i s/mawk// configure
             --without-debug \
             --without-ada   \
             --enable-widec  \
-            --enable-overwrite > ${log_dir}/ncurses-config.log
-make > ${log_dir}/ncurses-build.log
-make install >> ${log_dir}/ncurses-build.log
+            --enable-overwrite > ${log_dir}/ncurses-config.log 2>&1
+make > ${log_dir}/ncurses-build.log 2>&1
+make install >> ${log_dir}/ncurses-build.log 2>&1
 
 #Bash
 echo "Bash!"
 cd $SRCS
 tar -xf bash-4.4.18.tar.gz
 cd bash-4.4.18
-./configure --prefix=/tools --without-bash-malloc > ${log_dir}/bash-config.log
-make > ${log_dir}/bash-build.log
-make install >> ${log_dir}/bash-build.log
+./configure --prefix=/tools --without-bash-malloc > ${log_dir}/bash-config.log 2>&1
+make > ${log_dir}/bash-build.log 2>&1
+make install >> ${log_dir}/bash-build.log 2>&1
 ln -sv bash /tools/bin/sh
 
 
@@ -287,9 +287,9 @@ echo "Bison!"
 cd $SRCS
 tar -xf bison-3.0.5.tar.xz
 cd bison-3.0.5
-./configure --prefix=/tools > ${log_dir}/bison-config.log
-make > ${log_dir}/bison-build.log
-make install >> ${log_dir}/bison-build.log
+./configure --prefix=/tools > ${log_dir}/bison-config.log 2>&1
+make > ${log_dir}/bison-build.log 2>&1
+make install >> ${log_dir}/bison-build.log 2>&1
 
 
 #Bzip2
@@ -297,8 +297,8 @@ echo "Bzip2!"
 cd $SRCS
 tar -xf bzip2-1.0.6.tar.gz
 cd bzip2-1.0.6
-make > ${log_dir}/bzip2-build.log
-make PREFIX=/tools install >> ${log_dir}/bzip2-build.log
+make > ${log_dir}/bzip2-build.log 2>&1
+make PREFIX=/tools install >> ${log_dir}/bzip2-build.log 2>&1
 
 
 #Coreutils
@@ -307,9 +307,9 @@ cd $SRCS
 tar -xf coreutils-8.30.tar.xz
 cd coreutils-8.30
 export FORCE_UNSAFE_CONFIGURE=1 # if root user
-./configure --prefix=/tools --enable-install-program=hostname > ${log_dir}/coreutils-config.log
-make > ${log_dir}/coreutils-build.log
-make install >> ${log_dir}/coreutils-build.log
+./configure --prefix=/tools --enable-install-program=hostname > ${log_dir}/coreutils-config.log 2>&1
+make > ${log_dir}/coreutils-build.log 2>&1
+make install >> ${log_dir}/coreutils-build.log 2>&1
 
 
 #Diffutils
@@ -317,9 +317,9 @@ echo "Diffutils!"
 cd $SRCS
 tar -xf diffutils-3.6.tar.xz
 cd diffutils-3.6
-./configure --prefix=/tools > ${log_dir}/diffutils-config.log
-make > ${log_dir}/diffutils-build.log
-make install >> ${log_dir}/diffutils-build.log
+./configure --prefix=/tools > ${log_dir}/diffutils-config.log 2>&1
+make > ${log_dir}/diffutils-build.log 2>&1
+make install >> ${log_dir}/diffutils-build.log 2>&1
 
 
 #file
@@ -327,9 +327,9 @@ echo "File!"
 cd $SRCS
 tar -xf file-5.34.tar.gz
 cd file-5.34
-./configure --prefix=/tools > ${log_dir}/file-config.log
-make > ${log_dir}/file-build.log
-make install >> ${log_dir}/file-build.log
+./configure --prefix=/tools > ${log_dir}/file-config.log 2>&1
+make > ${log_dir}/file-build.log 2>&1
+make install >> ${log_dir}/file-build.log 2>&1
 
 
 #findutils
@@ -340,9 +340,9 @@ cd findutils-4.6.0
 sed -i 's/IO_ftrylockfile/IO_EOF_SEEN/' gl/lib/*.c
 sed -i '/unistd/a #include <sys/sysmacros.h>' gl/lib/mountlist.c
 echo "#define _IO_IN_BACKUP 0x100" >> gl/lib/stdio-impl.h
-./configure --prefix=/tools > ${log_dir}/findutils-config.log
-make > ${log_dir}/findutils-build.log
-make install >> ${log_dir}/findutils-build.log
+./configure --prefix=/tools > ${log_dir}/findutils-config.log 2>&1
+make > ${log_dir}/findutils-build.log 2>&1
+make install >> ${log_dir}/findutils-build.log 2>&1
 
 
 #Gawk
@@ -350,10 +350,9 @@ echo "Gawk!"
 cd $SRCS
 tar -xf gawk-4.2.1.tar.xz
 cd gawk-4.2.1
-./configure --prefix=/tools > ${log_dir}/gawk-config.log
-make > ${log_dir}/gawk-build.log
-make install >> ${log_dir}/gawk-build.log
-
+./configure --prefix=/tools > ${log_dir}/gawk-config.log 2>&1
+make > ${log_dir}/gawk-build.log 2>&1
+make install >> ${log_dir}/gawk-build.log 2>&1
 
 #Gettext
 echo "Gettext!"
@@ -361,12 +360,12 @@ cd $SRCS
 tar -xf gettext-0.19.8.1.tar.xz
 cd gettext-0.19.8.1
 cd gettext-tools
-EMACS="no" ./configure --prefix=/tools --disable-shared > ${log_dir}/gettext-config.log
-make -C gnulib-lib > ${log_dir}/gettext-build.log
-make -C intl pluralx.c >> ${log_dir}/gettext-build.log
-make -C src msgfmt >> ${log_dir}/gettext-build.log
-make -C src msgmerge >> ${log_dir}/gettext-build.log
-make -C src xgettext >> ${log_dir}/gettext-build.log
+EMACS="no" ./configure --prefix=/tools --disable-shared > ${log_dir}/gettext-config.log 2>&1
+make -C gnulib-lib > ${log_dir}/gettext-build.log 2>&1
+make -C intl pluralx.c >> ${log_dir}/gettext-build.log 2>&1
+make -C src msgfmt >> ${log_dir}/gettext-build.log 2>&1
+make -C src msgmerge >> ${log_dir}/gettext-build.log 2>&1
+make -C src xgettext >> ${log_dir}/gettext-build.log 2>&1
 cp -v src/{msgfmt,msgmerge,xgettext} /tools/bin
 
 
@@ -375,9 +374,9 @@ echo "Grep!"
 cd $SRCS
 tar -xf grep-3.1.tar.xz
 cd grep-3.1
-./configure --prefix=/tools > ${log_dir}/grep-config.log
-make > ${log_dir}/grep-build.log
-make install >> ${log_dir}/grep-build.log
+./configure --prefix=/tools > ${log_dir}/grep-config.log 2>&1
+make > ${log_dir}/grep-build.log 2>&1
+make install >> ${log_dir}/grep-build.log 2>&1
 
 
 #Gzip
@@ -387,9 +386,9 @@ tar -xf gzip-1.9.tar.xz
 cd gzip-1.9
 sed -i 's/IO_ftrylockfile/IO_EOF_SEEN/' lib/*.c
 echo "#define _IO_IN_BACKUP 0x100" >> lib/stdio-impl.h
-./configure --prefix=/tools > ${log_dir}/gzip-config.log
-make > ${log_dir}/gzip-build.log
-make install >> ${log_dir}/gzip-build.log
+./configure --prefix=/tools > ${log_dir}/gzip-config.log 2>&1
+make > ${log_dir}/gzip-build.log 2>&1
+make install >> ${log_dir}/gzip-build.log 2>&1
 
 
 #Make
@@ -398,9 +397,9 @@ cd $SRCS
 tar -xf make-4.2.1.tar.bz2
 cd make-4.2.1
 sed -i '211,217 d; 219,229 d; 232 d' glob/glob.c
-./configure --prefix=/tools --without-guile > ${log_dir}/make-config.log
-make > ${log_dir}/make-build.log
-make install >> ${log_dir}/make-build.log
+./configure --prefix=/tools --without-guile > ${log_dir}/make-config.log 2>&1
+make > ${log_dir}/make-build.log 2>&1
+make install >> ${log_dir}/make-build.log 2>&1
 
 
 #Patch
@@ -408,9 +407,9 @@ echo "Patch!"
 cd $SRCS
 tar -xf patch-2.7.6.tar.xz
 cd patch-2.7.6
-./configure --prefix=/tools > ${log_dir}/patch-config.log
-make > ${log_dir}/patch-build.log
-make install >> ${log_dir}/patch-build.log
+./configure --prefix=/tools > ${log_dir}/patch-config.log 2>&1
+make > ${log_dir}/patch-build.log 2>&1
+make install >> ${log_dir}/patch-build.log 2>&1
 
 
 #Perl
@@ -418,8 +417,8 @@ echo "Perl!"
 cd $SRCS
 tar -xf perl-5.28.0.tar.xz
 cd perl-5.28.0
-sh Configure -des -Dprefix=/tools -Dlibs=-lm -Uloclibpth -Ulocincpth > ${log_dir}/perl-config.log
-make > ${log_dir}/perl-build.log
+sh Configure -des -Dprefix=/tools -Dlibs=-lm -Uloclibpth -Ulocincpth > ${log_dir}/perl-config.log 2>&1
+make > ${log_dir}/perl-build.log 2>&1
 cp -v perl cpan/podlators/scripts/pod2man /tools/bin
 mkdir -pv /tools/lib/perl5/5.28.0
 cp -Rv lib/* /tools/lib/perl5/5.28.0
@@ -430,9 +429,9 @@ echo "Sed!"
 cd $SRCS
 tar -xf sed-4.5.tar.xz
 cd sed-4.5
-./configure --prefix=/tools > ${log_dir}/sed-config.log
-make > ${log_dir}/sed-build.log
-make install >> ${log_dir}/sed-build.log
+./configure --prefix=/tools > ${log_dir}/sed-config.log 2>&1
+make > ${log_dir}/sed-build.log 2>&1
+make install >> ${log_dir}/sed-build.log 2>&1
 
 
 #Tar
@@ -440,9 +439,9 @@ echo "Tar!"
 cd $SRCS
 tar -xf tar-1.30.tar.xz
 cd tar-1.30
-./configure --prefix=/tools > ${log_dir}/tar-config.log
-make > ${log_dir}/tar-build.log
-make install >> ${log_dir}/tar-build.log
+./configure --prefix=/tools > ${log_dir}/tar-config.log 2>&1
+make > ${log_dir}/tar-build.log 2>&1
+make install >> ${log_dir}/tar-build.log 2>&1
 
 
 #Texinfo
@@ -450,9 +449,9 @@ echo "Texinfo!"
 cd $SRCS
 tar -xf texinfo-6.5.tar.xz
 cd texinfo-6.5
-./configure --prefix=/tools > ${log_dir}/texinfo-config.log
-make > ${log_dir}/texinfo-build.log
-make install >> ${log_dir}/texinfo-build.log
+./configure --prefix=/tools > ${log_dir}/texinfo-config.log 2>&1
+make > ${log_dir}/texinfo-build.log 2>&1
+make install >> ${log_dir}/texinfo-build.log 2>&1
 
 
 #Util Linux
@@ -465,9 +464,9 @@ cd util-linux-2.32.1
             --disable-makeinstall-chown    \
             --without-systemdsystemunitdir \
             --without-ncurses              \
-            PKG_CONFIG="" > ${log_dir}/util-linux-config.log
-make > ${log_dir}/util-linux-build.log
-make install >> ${log_dir}/util-linux-build.log
+            PKG_CONFIG="" > ${log_dir}/util-linux-config.log 2>&1
+make > ${log_dir}/util-linux-build.log 2>&1
+make install >> ${log_dir}/util-linux-build.log 2>&1
 
 
 #Xz
@@ -475,7 +474,6 @@ echo "Xz!"
 cd $SRCS
 tar -xf xz-5.2.4.tar.xz
 cd xz-5.2.4
-./configure --prefix=/tools > ${log_dir}/xz-config.log
-make > ${log_dir}/xz-build.log
-make install >> ${log_dir}/xz-build.log
-
+./configure --prefix=/tools > ${log_dir}/xz-config.log 2>&1
+make > ${log_dir}/xz-build.log 2>&1
+make install >> ${log_dir}/xz-build.log 2>&1
