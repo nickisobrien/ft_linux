@@ -1,6 +1,6 @@
 #!/bin/bash
 
-source ./env-vars.sh
+source ./common.sh
 
 if [ ! -d "$LFS" ]; then
 	mkdir -v $LFS

@@ -2,7 +2,7 @@
 
 set -euo pipefail
 
-source ./env-vars.sh
+source ./common.sh
 
 #logging
 datetime=$(date -u +%F_%H%M)
